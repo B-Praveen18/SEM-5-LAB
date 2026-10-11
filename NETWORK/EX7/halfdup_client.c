@@ -10,8 +10,8 @@
 
 int main() {
     int sockfd, n;
-    struct sockaddr_in server_addr;
-    socklen_t addr_len = sizeof(server_addr);
+    struct sockaddr_in server;
+    socklen_t addr_len = sizeof(server);
     char message[SIZE], reply[SIZE];
 
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -20,10 +20,10 @@ int main() {
         return 1;
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    memset(&server, 0, sizeof(server));
+    server.sin_family = AF_INET;
+    server.sin_port = htons(PORT);
+    server.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     while (1) {
         printf("Client: ");
@@ -31,7 +31,7 @@ int main() {
         message[strcspn(message, "\n")] = '\0';
 
         sendto(sockfd, message, strlen(message), 0,
-               (struct sockaddr *)&server_addr, sizeof(server_addr));
+               (struct sockaddr *)&server, sizeof(server));
 
         if (strcmp(message, "exit") == 0)
             break;
