@@ -42,7 +42,7 @@ void handle(int c)
         }
         else if (!strcmp(cmd, "QUIT"))
         {
-            reply(c, "221 Goodbye\n");
+            reply(c, "221 Terminated\n");
             break;
         }
         else if (!login)

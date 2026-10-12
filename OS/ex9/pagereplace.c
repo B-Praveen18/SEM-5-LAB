@@ -2,7 +2,6 @@
 
 #define MAX 100
 
-/* Returns index of page in frames, or -1 if not present */
 int search(int frames[], int nf, int page) {
     for (int i = 0; i < nf; i++)
         if (frames[i] == page)
@@ -23,7 +22,6 @@ void print_result(const char *name, int faults, int np) {
            (float)(np - faults) / np, (float)faults / np);
 }
 
-/* ---------------- FIFO ---------------- */
 void fifo(int pages[], int np, int nf) {
     int frames[MAX], front = 0, faults = 0;
     for (int i = 0; i < nf; i++) frames[i] = -1;
@@ -33,7 +31,7 @@ void fifo(int pages[], int np, int nf) {
     for (int i = 0; i < np; i++) {
         printf("%3d  | ", pages[i]);
         if (search(frames, nf, pages[i]) == -1) {
-            frames[front] = pages[i];          /* replace oldest page */
+            frames[front] = pages[i];          
             front = (front + 1) % nf;
             faults++;
             print_frames(frames, nf);
@@ -46,7 +44,6 @@ void fifo(int pages[], int np, int nf) {
     print_result("FIFO", faults, np);
 }
 
-/* ---------------- LRU ---------------- */
 void lru(int pages[], int np, int nf) {
     int frames[MAX], last_used[MAX], faults = 0;
     for (int i = 0; i < nf; i++) { frames[i] = -1; last_used[i] = -1; }
@@ -57,13 +54,13 @@ void lru(int pages[], int np, int nf) {
         printf("%3d  | ", pages[i]);
         int pos = search(frames, nf, pages[i]);
         if (pos != -1) {
-            last_used[pos] = i;                /* update recency on hit */
+            last_used[pos] = i;                
             print_frames(frames, nf);
             printf("| Hit\n");
         } else {
             int victim = 0;
             for (int j = 0; j < nf; j++) {
-                if (frames[j] == -1) { victim = j; break; }   /* free frame */
+                if (frames[j] == -1) { victim = j; break; }   
                 if (last_used[j] < last_used[victim]) victim = j;
             }
             frames[victim] = pages[i];
@@ -76,7 +73,6 @@ void lru(int pages[], int np, int nf) {
     print_result("LRU", faults, np);
 }
 
-/* ---------------- Optimal ---------------- */
 void optimal(int pages[], int np, int nf) {
     int frames[MAX], faults = 0;
     for (int i = 0; i < nf; i++) frames[i] = -1;
@@ -93,12 +89,12 @@ void optimal(int pages[], int np, int nf) {
 
         int victim = -1;
         for (int j = 0; j < nf; j++)
-            if (frames[j] == -1) { victim = j; break; }        /* free frame */
+            if (frames[j] == -1) { victim = j; break; }        
 
         if (victim == -1) {
             int farthest = -1;
             for (int j = 0; j < nf; j++) {
-                int next = np;                                  /* np = never used again */
+                int next = np;                                 
                 for (int k = i + 1; k < np; k++)
                     if (pages[k] == frames[j]) { next = k; break; }
                 if (next > farthest) { farthest = next; victim = j; }
